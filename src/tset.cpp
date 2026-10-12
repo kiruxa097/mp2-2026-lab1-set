@@ -6,83 +6,130 @@
 // Множество - реализация через битовые поля
 
 #include "tset.h"
+#include <stdexcept>
 
-TSet::TSet(int mp) : BitField(-1)
+TSet::TSet(int mp) : MaxPower(mp), BitField(mp)
 {
 }
 
 // конструктор копирования
-TSet::TSet(const TSet &s) : BitField(-1)
+TSet::TSet(const TSet &s) : MaxPower(s.MaxPower), BitField(s.BitField)
 {
 }
 
 // конструктор преобразования типа
-TSet::TSet(const TBitField &bf) : BitField(-1)
+TSet::TSet(const TBitField &bf) : MaxPower(bf.GetLength()), BitField(bf)
 {
 }
 
 TSet::operator TBitField()
-{
+{ 
+    return BitField; 
 }
 
 int TSet::GetMaxPower(void) const // получить макс. к-во эл-тов
 {
+    return MaxPower;
 }
 
 int TSet::IsMember(const int Elem) const // элемент множества?
 {
-    return 0;
+    if (Elem < 0 || Elem >= MaxPower)
+        return 0;
+    return BitField.GetBit(Elem);
 }
 
 void TSet::InsElem(const int Elem) // включение элемента множества
 {
+    if (Elem < 0 || Elem >= MaxPower)
+        throw std::out_of_range("Элемент вышел за границы");
+    BitField.SetBit(Elem);
 }
 
 void TSet::DelElem(const int Elem) // исключение элемента множества
 {
+    if (Elem < 0 || Elem >= MaxPower)
+        throw std::out_of_range("Element is outside the universe");
+    BitField.ClrBit(Elem);
 }
 
 // теоретико-множественные операции
 
 TSet& TSet::operator=(const TSet &s) // присваивание
 {
+    if (this == &s) {
+        return *this;
+    }
+    MaxPower = s.MaxPower;
+    BitField = s.BitField;
+    return *this;
 }
 
 int TSet::operator==(const TSet &s) const // сравнение
 {
-    return 0;
+    return BitField == s.BitField;
 }
 
 int TSet::operator!=(const TSet &s) const // сравнение
 {
+    return BitField != s.BitField;
 }
 
 TSet TSet::operator+(const TSet &s) // объединение
 {
+    return TSet(BitField | s.BitField);
 }
 
 TSet TSet::operator+(const int Elem) // объединение с элементом
 {
+    TSet temp(*this);
+    temp.InsElem(Elem);
+    return temp;
 }
 
 TSet TSet::operator-(const int Elem) // разность с элементом
 {
+    TSet temp(*this);
+    temp.DelElem(Elem);
+    return temp;
 }
 
 TSet TSet::operator*(const TSet &s) // пересечение
 {
+    return TSet(BitField & s.BitField);
 }
 
 TSet TSet::operator~(void) // дополнение
 {
+    return TSet(~BitField);
 }
 
 // перегрузка ввода/вывода
 
 istream &operator>>(istream &istr, TSet &s) // ввод
 {
+    for (int i = 0; i < s.MaxPower; i++) {
+        int bit;
+        if (!(istr >> bit)) {
+            return istr;
+        }
+        if (bit == 1) {
+            s.InsElem(i);
+        }
+        else if (bit == 0) {
+            s.DelElem(i);
+        }
+    }
+    return istr;
 }
 
 ostream& operator<<(ostream &ostr, const TSet &s) // вывод
 {
+    for (int i = 0; i < s.MaxPower; i++) {
+        if (s.IsMember(i)) {
+            ostr << 1;
+        }
+        else { ostr << 0; }
+    }
+    return ostr;
 }
