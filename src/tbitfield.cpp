@@ -54,16 +54,25 @@ int TBitField::GetLength(void) const // получить длину (к-во б�
 
 void TBitField::SetBit(const int n) // установить бит
 {
+  if (n < 0 || n >= BitLen) {
+        throw std::out_of_range("Неправильный индекс");
+  }
   pMem[GetMemIndex(n)] |= GetMemMask(n);
 }
 
 void TBitField::ClrBit(const int n) // очистить бит
 {
+  if (n < 0 || n >= BitLen) {
+        throw std::out_of_range("Неправильный индекс");
+  }
   pMem[GetMemIndex(n)] &= ~GetMemMask(n);
 }
 
 int TBitField::GetBit(const int n) const // получить значение бита
 {
+  if (n < 0 || n >= BitLen) {
+        throw std::out_of_range("Неправильный индекс");
+  }
   return (pMem[GetMemIndex(n)] & GetMemMask(n)) != 0;
 }
 
@@ -121,8 +130,10 @@ TBitField TBitField::operator|(const TBitField &bf) // операция "или"
 
 TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 {
+  int maxLen = BitLen > bf.BitLen ? BitLen : bf.BitLen;
+  TBitField res(maxLen);
+  
   int minLen = BitLen < bf.BitLen ? BitLen : bf.BitLen;
-  TBitField res(minLen);
 
   for (int i = 0; i < res.MemLen; i++) {
     res.pMem[i] = bf.pMem[i] & pMem[i];
