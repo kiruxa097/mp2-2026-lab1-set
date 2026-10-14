@@ -132,10 +132,10 @@ TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 {
   int maxLen = BitLen > bf.BitLen ? BitLen : bf.BitLen;
   TBitField res(maxLen);
-  
-  int minLen = BitLen < bf.BitLen ? BitLen : bf.BitLen;
 
-  for (int i = 0; i < res.MemLen; i++) {
+  int minMemLen = MemLen < bf.MemLen ? MemLen : bf.MemLen;
+  
+  for (int i = 0; i < minMemLen; i++) {
     res.pMem[i] = bf.pMem[i] & pMem[i];
   }
 
