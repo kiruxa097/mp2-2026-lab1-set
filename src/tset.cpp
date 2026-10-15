@@ -108,17 +108,12 @@ TSet TSet::operator~(void) // дополнение
 
 istream &operator>>(istream &istr, TSet &s) // ввод
 {
-    for (int i = 0; i < s.MaxPower; i++) {
-        int bit;
-        if (!(istr >> bit)) {
-            return istr;
-        }
-        if (bit == 1) {
-            s.InsElem(i);
-        }
-        else if (bit == 0) {
-            s.DelElem(i);
-        }
+    int count;
+    if (!(istr >> count) || count < 0) { return istr;}
+    for (int i = 0; i < count; i++) {
+        int d;
+        if (!(istr >> d)) { return istr; }
+        s.InsElem(d);
     }
     return istr;
 }
@@ -126,10 +121,7 @@ istream &operator>>(istream &istr, TSet &s) // ввод
 ostream& operator<<(ostream &ostr, const TSet &s) // вывод
 {
     for (int i = 0; i < s.MaxPower; i++) {
-        if (s.IsMember(i)) {
-            ostr << 1;
-        }
-        else { ostr << 0; }
+        if (s.IsMember(i)) { ostr << i << endl; }
     }
     return ostr;
 }

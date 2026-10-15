@@ -159,16 +159,16 @@ TBitField TBitField::operator~(void) // отрицание
 istream &operator>>(istream &istr, TBitField &bf) // ввод
 {
   for (int i = 0; i < bf.BitLen; i++) {
-    int bit;
+    char bit;
     istr >> bit;
     if (!istr) {
       break;
     }
     
-    if (bit == 1) {
+    if (bit == '1') {
       bf.SetBit(i);
     }
-    else if (bit == 0) {
+    else if (bit == '0') {
       bf.ClrBit(i);
     }
   }
